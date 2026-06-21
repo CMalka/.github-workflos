@@ -1,0 +1,31 @@
+name: Hello World CI/CD Use artifact
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create timestamped file
+        run: |
+          echo "Hello, CI/CD World! Created at $(date)" > timestamped_hello.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-artifact
+          path: ./timestamped_hello.txt
+
+  use-artifact:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hello-artifact
+      - name: Display artifact contents
+        run: cat ./timestamped_hello.txt
